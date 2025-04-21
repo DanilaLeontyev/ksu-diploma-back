@@ -1,9 +1,13 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { type Router } from "express";
-import { z } from "zod";
+import { any, z } from "zod";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { CartItemSchema, GetCartSchema } from "@/api/cart/cartModel";
+import {
+  CartItemSchema,
+  GetCartSchema,
+  PostCartSchema,
+} from "@/api/cart/cartModel";
 import { validateRequest } from "@/common/utils/httpHandlers";
 import { cartController } from "./cartController";
 
@@ -29,4 +33,22 @@ cartRegistry.registerPath({
   responses: createApiResponse(CartItemSchema, "Success"),
 });
 
-cartRouter.get("/:id", validateRequest(GetCartSchema), cartController.getCarts);
+cartRouter.get("/:id", validateRequest(GetCartSchema), cartController.getCart);
+
+cartRegistry.registerPath({
+  method: "post",
+  path: "/carts",
+  tags: ["Cart"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: PostCartSchema.shape.body,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(z.string(), "Success"),
+});
+
+cartRouter.post("/", cartController.createOrder);
