@@ -1,32 +1,20 @@
 # Base stage with pnpm setup
 FROM node:23.11.0-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+
+# Set the working directory in the container
 WORKDIR /app
 
-# Production dependencies stage
-FROM base AS prod-deps
-COPY package.json pnpm-lock.yaml ./
-# Install only production dependencies
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --ignore-scripts
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
-# Build stage - install all dependencies and build
-FROM base AS build
-COPY package.json pnpm-lock.yaml ./
-# Install all dependencies (including dev dependencies)
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --ignore-scripts
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code to the working directory
 COPY . .
-RUN pnpm run build
 
-# Final stage - combine production dependencies and build output
-FROM node:23.11.0-alpine AS runner
-WORKDIR /app
-COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
-COPY --from=build --chown=node:node /app/dist ./dist
-
-# Use the node user from the image
-USER node
+# Build the React app
+RUN npm run build
 
 # Expose port 8080
 EXPOSE 8080
