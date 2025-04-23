@@ -10,6 +10,7 @@ export const CartItemSchema = z.object({
   id: z.string(),
   productId: z.string(),
   paid: z.boolean(),
+  productUID: z.string(),
 });
 
 // Input Validation for 'GET cart/:id' endpoint

@@ -42,10 +42,10 @@ export class CartRepository {
   async createOrder(ids: string[]): Promise<string | null> {
     const newUID = randomUUID();
     const stmt = db.prepare(
-      "INSERT INTO carts (id, productId, paid) VALUES (?, ?, ?)"
+      "INSERT INTO carts (id, productId, paid, productUID) VALUES (?, ?, ?, ?)"
     );
     for (const id of ids) {
-      stmt.run(newUID, id, "false");
+      stmt.run(newUID, id, "false", randomUUID());
     }
     return newUID;
   }
