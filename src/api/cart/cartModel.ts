@@ -24,3 +24,11 @@ export const PostCartSchema = z.object({
     productIds: z.array(commonValidations.id),
   }),
 });
+
+// Input Validation for 'POST payorder/' endpoint
+export const PostPayOrderSchema = z.object({
+  body: z.object({
+    productUIDs: z.array(commonValidations.id),
+    cartId: z.string(),
+  }),
+});

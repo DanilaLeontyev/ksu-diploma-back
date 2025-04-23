@@ -83,6 +83,33 @@ export class CartService {
       );
     }
   }
+
+  async payOrder(
+    ids: string[],
+    cartId: string
+  ): Promise<ServiceResponse<string | null>> {
+    try {
+      const orderId = await this.cartRepository.payOrder(ids, cartId);
+      if (!orderId) {
+        return ServiceResponse.failure(
+          "Count not pay order",
+          null,
+          StatusCodes.NOT_FOUND
+        );
+      }
+      return ServiceResponse.success<string>("Order payment", orderId);
+    } catch (ex) {
+      const errorMessage = `Error payment order with ids ${ids} and cartId ${cartId}:, ${
+        (ex as Error).message
+      }`;
+      logger.error(errorMessage);
+      return ServiceResponse.failure(
+        "An error occurred while payment order.",
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
 }
 
 export const cartService = new CartService();

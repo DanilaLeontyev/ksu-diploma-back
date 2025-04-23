@@ -49,4 +49,16 @@ export class CartRepository {
     }
     return newUID;
   }
+
+  async payOrder(ids: string[], cartId: string): Promise<string | null> {
+    const stmt = db.prepare(
+      "UPDATE carts SET paid = 'true' WHERE productUID=(?) AND id=(?)"
+    );
+
+    for (const id of ids) {
+      stmt.run(id, cartId);
+    }
+
+    return "Done";
+  }
 }

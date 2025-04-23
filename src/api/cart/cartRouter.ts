@@ -7,6 +7,7 @@ import {
   CartItemSchema,
   GetCartSchema,
   PostCartSchema,
+  PostPayOrderSchema,
 } from "@/api/cart/cartModel";
 import { validateRequest } from "@/common/utils/httpHandlers";
 import { cartController } from "./cartController";
@@ -52,3 +53,21 @@ cartRegistry.registerPath({
 });
 
 cartRouter.post("/", cartController.createOrder);
+
+cartRegistry.registerPath({
+  method: "post",
+  path: "/carts/payorder",
+  tags: ["Cart"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: PostPayOrderSchema.shape.body,
+        },
+      },
+    },
+  },
+  responses: createApiResponse(z.string(), "Success"),
+});
+
+cartRouter.post("/payorder", cartController.payOrder);

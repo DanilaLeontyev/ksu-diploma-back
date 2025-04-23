@@ -18,6 +18,12 @@ class CartController {
     const serviceResponse = await cartService.createOrder(ids);
     return handleServiceResponse(serviceResponse, res);
   };
+  public payOrder: RequestHandler = async (req: Request, res: Response) => {
+    const ids = req.body.productUIDs;
+    const cartId = req.body.cartId;
+    const serviceResponse = await cartService.payOrder(ids, cartId);
+    return handleServiceResponse(serviceResponse, res);
+  };
 }
 
 export const cartController = new CartController();
