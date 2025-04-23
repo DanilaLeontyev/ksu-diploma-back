@@ -17,16 +17,12 @@ export class CartRepository {
       .prepare(`SELECT * FROM carts WHERE id = '${id}'`)
       .all() as CartItem[];
 
-    console.log("data", data);
-
     const productsIds: string[] = data.reduce((acc: string[], item) => {
       if (acc.indexOf(item.productId) === -1) {
         acc.push(item.productId);
       }
       return acc;
     }, []);
-
-    console.log("productsIds", productsIds);
 
     const products: Product[] = db
       .prepare(`SELECT * FROM products WHERE id IN (${productsIds.join(",")})`)
